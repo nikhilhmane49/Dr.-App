@@ -11,10 +11,7 @@ const configmongo = async () => {
         });
 
     // Correct the connection string by removing the extra `/DrApp` if it's already part of the environment variable
-    await mongoose.connect(process.env.MONGODB, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
+    await mongoose.connect(process.env.MONGODB);
 };
 
 module.exports = configmongo;
