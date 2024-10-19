@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const configmongo = async () => {
+
+    //successfully connected updatation
     mongoose.connection.on('connected', () => {
         console.log("Db connected successfully");
     });
