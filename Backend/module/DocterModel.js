@@ -20,7 +20,7 @@ const doctorschema = new mongoose.Schema({
         type: String,
         required:true
     },
-        speciality: {
+    speciality: {
         type: String,
         required:true
     },
@@ -38,7 +38,7 @@ const doctorschema = new mongoose.Schema({
     },
             available: {
         type: String,
-        required:true
+    default:true
     },
              fees: {
         type: String,
@@ -61,4 +61,5 @@ const doctorschema = new mongoose.Schema({
 )
 
 const doctorModel = mongoose.model('doctor', doctorschema);
-export default doctorModel;
+
+module.exports =  doctorModel ;

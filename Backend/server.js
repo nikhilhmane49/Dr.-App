@@ -5,15 +5,17 @@ require('dotenv').config();
 const mongoDB = require('./config/mongoDB.js');
 const connectcloudinary = require('./config/Cloudinary.js');
 
+const adminrouter = require('./routes/adminroutes.js');
+
 const app = express();
 
 const port = process.env.PORT || 4000;
 
 //call
 
-//mongoDB
+//*mongoDB
 mongoDB();
-//cloudinary
+//*cloudinary
 connectcloudinary();
 
 
@@ -22,6 +24,16 @@ connectcloudinary();
 
 app.use(express.json());
 app.use(cors())
+
+
+
+//APi end point
+
+app.use('/api/admin',adminrouter)
+
+
+
+
 
 //listen
 app.listen(port, () => {
