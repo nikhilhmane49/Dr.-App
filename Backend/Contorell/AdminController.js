@@ -2,8 +2,18 @@
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const cloudinary = require('cloudinary').v2;
-const DoctorModel  = require("../module/DocterModel.js");
-//API for adding Dr.
+const DoctorModel = require("../module/DocterModel.js");
+
+const jwt = require('jsonwebtoken');
+
+
+
+
+
+
+
+
+//#######API for adding Dr.########################
 
 const addDoctor = async (req, res) => {
     try {
@@ -83,4 +93,50 @@ const addDoctor = async (req, res) => {
     }
 }
 
-module.exports = { addDoctor };
+
+
+//API for admin login
+
+
+const adminLogin = async (req, res) => {
+    
+    const { email, password } = req.body;
+
+    try {
+        if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+
+            const token = jwt.sign(email + password, process.env.JWT_SECRET);
+
+            console.log(token);
+            
+            res.status(200).json({
+                success: true,
+                token: token,
+                message: "Admin login successful"
+            })
+
+        }
+        else {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid credentials"
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    
+    
+    }
+
+
+}
+
+
+
+
+
+module.exports = { addDoctor,adminLogin }
