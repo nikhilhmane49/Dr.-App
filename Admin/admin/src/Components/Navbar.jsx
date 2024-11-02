@@ -14,7 +14,7 @@ function Navbar() {
   };
 
   return (
-    <div className="flex items-center justify-between bg-gray-100 p-4 shadow-md">
+    <div className="  flex items-center justify-between bg-gray-100 p-4 shadow-md">
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="h-10 w-auto mr-3" />
         <p className="text-primary text-3xl font-bold">{atoken ? "Admin" : "Doctor"}</p>
