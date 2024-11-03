@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import uploadimg from '../../assets_admin/upload_area.svg';
+import axios from 'axios';
+import { Admincontext } from '../../Contex/Admincontex';
+import { toast } from 'react-toastify';
 
 function AddDoctors() {
 
 
-const [Docimg , setDocimg]=useState(false);
+const [Docimg , setDocimg]=useState(null);
     const [name , setname]=useState("");
     const [email , setemail]=useState("");
     const [Password , setPassword]=useState("");
@@ -17,10 +20,72 @@ const [Docimg , setDocimg]=useState(false);
     const [about , setabout]=useState("");
 
 
+console.log(Docimg);
+
+const { atoken,backendurl } = useContext(Admincontext);
 
 
 const Onclickhandeler = async (e)=>{
     e.preventDefault();
+
+
+    try {
+
+if(!Docimg){
+  console.log("img not Selected");
+  
+  toast.error("Image is not Selected");
+}
+
+const formData = new FormData();
+
+formData.append('image', Docimg);
+formData.append('name', name);
+formData.append('email', email);
+formData.append('password',Password);
+formData.append('experience',Experience);
+formData.append('fees',Number(Fees));
+formData.append('speciality',Speciality);
+formData.append('address',JSON.stringify({line1:Address1,line2:Address2}));
+formData.append('degree',Education);
+formData.append('about',about);
+
+
+const response = await axios.post(`${backendurl}/api/admin/add-doctor`, formData, {
+  headers: {
+      atoken: atoken,
+   
+  }
+});
+
+if(response.data.success){ // Changed from response.success to response.data.success
+  toast.success(response.data.message); // Changed to response.data.message
+
+setDocimg(false);
+setname(" ");
+setemail(" ");
+setAddress1(" ");
+setAddress2(" ");
+setEducation(" ");
+setFees(" ");
+setPassword(" ");
+setabout(" ");
+
+
+
+
+
+} else {
+  toast.error(response.data.message);
+}
+} catch (error) {
+console.log(error);
+toast.error(error.response?.data?.message || "Something went wrong"); // Added error handling
+}
+
+
+
+
 }
 
 
@@ -28,7 +93,7 @@ const Onclickhandeler = async (e)=>{
 
   return (
 
-    <form onClick={Onclickhandeler}>
+    <form onSubmit={Onclickhandeler}>
     <div className="p-6 bg-gray-50 rounded-md shadow-md w-full max-w-5xl mx-auto overflow-y-scroll">
       <p className="text-xl font-semibold mb-6">Add Doctor</p>
       <div className="flex gap-6">
@@ -38,6 +103,7 @@ const Onclickhandeler = async (e)=>{
           <div className="flex flex-col items-center">
             <label htmlFor="doc-img" className="flex flex-col items-center cursor-pointer">
               <img src={ Docimg ? URL.createObjectURL(Docimg) : uploadimg} alt="" className="w-24 h-24 mb-2" />
+
               <p className="text-gray-500 text-sm">Upload doctor picture</p>
             </label>
             <input onChange={(e)=>{setDocimg(e.target.files[0])}} type="file" id="doc-img" required hidden />

@@ -57,10 +57,15 @@ const addDoctor = async (req, res) => {
 
 
         //uploading image to cloudinary
-
-        const imageupload = await cloudinary.uploader.upload(imagefile.path, { resource_type: "image" });
+        let imageurl;
+        try {
+            const imageupload = await cloudinary.uploader.upload(imagefile.path, { resource_type: "image" });
+            imageurl = imageupload.secure_url;
+        } catch (uploadError) {
+            console.error("Cloudinary upload error:", uploadError);
+            return res.status(500).json({ success: false, message: "Image upload failed" });
+        }
         
-        const imageurl = imageupload.secure_url;
 
         const doctorData = {
             name,
