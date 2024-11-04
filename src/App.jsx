@@ -12,6 +12,8 @@ import Myprofile from './pages/Myprofile'
 import Doctor from './pages/Doctor'
 import Navbar from './Compoenets/common/Navbar'
 import Footer from './Compoenets/common/Footer'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
@@ -19,7 +21,7 @@ function App() {
 
   return (
     <>
-    
+        <ToastContainer />
 <Navbar/>
 
 

@@ -6,6 +6,8 @@ const mongoDB = require('./config/mongoDB.js');
 const connectcloudinary = require('./config/Cloudinary.js');
 
 const adminrouter = require('./routes/adminroutes.js');
+const doctorroutes=require('./routes/dctorroutes.js');
+const userroutes =require('./routes/userroutes.js');
 
 const app = express();
 
@@ -30,7 +32,9 @@ app.use(cors());
 
 //APi end point
 
-app.use('/api/admin',adminrouter)
+app.use('/api/admin',adminrouter);
+app.use('/api/doctor',doctorroutes);
+app.use('/api/user',userroutes);
 
 
 

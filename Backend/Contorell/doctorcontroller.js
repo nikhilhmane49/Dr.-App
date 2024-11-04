@@ -10,11 +10,11 @@ const changeavaliblity= async (req,res)=>{
         
 const {doc_id}=req.body;
 
-console.log("Received doc_id:", doc_id);  // Log doc_id
+
 
 const docdata=await doctorModel.findById(doc_id);
 
-console.log("Doctor data:", docdata);  // Log the doctor data
+
 
 await doctorModel.findByIdAndUpdate(doc_id,{
     available:!docdata.available,
@@ -36,4 +36,30 @@ res.status(200).json({
 
 }
 
-module.exports = { changeavaliblity}
+
+
+const listdoctor=async(req,res)=>{
+
+try {
+    const data=await doctorModel.find({}).select(['-password','-email'])
+res.status(200).json({
+    success:true,
+    data,
+    message:"list of Doctor"
+})
+
+} catch (error) {
+    console.log(error);
+    return res.status(500).json({
+        success:false,
+        message:"Internal server error"
+    })
+}
+
+
+
+
+}
+
+
+module.exports = { changeavaliblity , listdoctor}

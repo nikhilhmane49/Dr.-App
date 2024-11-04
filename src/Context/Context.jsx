@@ -1,13 +1,40 @@
 
 import { createContext } from "react";
+import axios from "axios";
+import { useEffect ,useState } from "react";
+import { toast } from "react-toastify";
 
-import { doctors } from "../assets/assets_frontend/assets";
 
 export const Appcontext = createContext();
 
 const AppProvider = (props) => { 
 
 
+    const[doctors , setdoctors]=useState([])
+    const backendurl = import.meta.env.VITE_BACKEND_URL;
+
+const listdoctor = async()=>{
+
+    try {
+
+        const response = await axios.get(`${backendurl}/api/doctor/listdoctor`,{});
+
+        if(response.data.success){
+            toast.success(response.data.message);
+            setdoctors(response.data.data); 
+        }else{
+            toast.error(response.data.message);
+        }
+        
+    } catch (error) {
+        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
+    }
+}
+
+useEffect(()=>{
+    listdoctor();
+},[])
 
     const value = {
         doctors

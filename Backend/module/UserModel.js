@@ -20,7 +20,7 @@ const userschema = new mongoose.Schema({
       },
       address: {
         type: Object,
-          required: true,
+          // required: true,
           default: {
               line1: "",
               line2:"",
@@ -28,21 +28,21 @@ const userschema = new mongoose.Schema({
     },
       gender: {
         type: String,
-        required:true
+        // required:true
     },
       dob: {
         type: String,
-          required: true,
+          // required: true,
         default:"not selected"
     },
     phone: {
           type: String,
-        required: true,
+        // required: true,
           default:'0000000000'
       }
 
 })
 
-const user = mongoose.model('user',userschema);
+const userModel = mongoose.model('user',userschema);
 
-module.exports = user;
+module.exports = userModel;
