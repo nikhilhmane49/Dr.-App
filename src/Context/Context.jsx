@@ -9,8 +9,9 @@ export const Appcontext = createContext();
 
 const AppProvider = (props) => { 
 
-
+const[token,settoken]=useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
     const[doctors , setdoctors]=useState([])
+    
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
 const listdoctor = async()=>{
@@ -37,7 +38,9 @@ useEffect(()=>{
 },[])
 
     const value = {
-        doctors
+        doctors,
+        backendurl,
+        token,settoken
     }
 
     return (

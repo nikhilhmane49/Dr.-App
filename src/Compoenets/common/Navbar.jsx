@@ -3,11 +3,21 @@ import logo from "../../assets/assets_frontend/logo.svg";
 import profile_pic from "../../assets/assets_frontend/profile_pic.png";
 import dropdown from "../../assets/assets_frontend/dropdown_icon.svg";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import {Appcontext} from "../../Context/Context";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(true);
+const {token,settoken}=useContext(Appcontext);
   const [menuOpen, setMenuOpen] = useState(false);
+
+const logout = ()=>{
+
+  settoken('');
+  localStorage.removeItem('token');
+
+}
+
 
   return (
     <>
@@ -98,7 +108,7 @@ function Navbar() {
                   My Appointments
                 </p>
                 <p
-                  onClick={() => setToken(false)}
+                  onClick={logout}
                   className="hover:text-black cursor-pointer text-lg lg:text-xl text-gray-500 select-none"
                 >
                   Logout
