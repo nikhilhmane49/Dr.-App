@@ -69,7 +69,9 @@ setAddress2(" ");
 setEducation(" ");
 setFees(" ");
 setPassword(" ");
+setExperience("1 Year");
 setabout(" ");
+setSpeciality("General physician");
 
 
 

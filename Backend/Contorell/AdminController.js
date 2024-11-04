@@ -141,7 +141,36 @@ const adminLogin = async (req, res) => {
 }
 
 
+//######Get-all the doctors 
+
+const getalldoctor = async(req,res)=>{
+    try {
+    
+        const doctors = await DoctorModel.find({}).select('-password');
+        
+     
+        if(doctors && doctors.length > 0){
+            res.status(200).json({
+                success: true,
+                data: doctors,
+                message: "Doctors fetched successfully"
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: "No doctors found"
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
 
 
 
-module.exports = { addDoctor,adminLogin }
+module.exports = { addDoctor,adminLogin,getalldoctor}
