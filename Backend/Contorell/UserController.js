@@ -1,5 +1,6 @@
 const userModel = require('../module/UserModel');
 const bcrypt = require('bcrypt');
+const cloudinary = require('cloudinary').v2;
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -87,7 +88,7 @@ const regester= async (req,res)=>{
 
 
 
-
+//###api for login
 
 const userlogin = async(req,res)=>{
 
@@ -137,4 +138,100 @@ token,
 }
 
 
-module.exports={regester,userlogin}
+
+//####Api for profile getting
+
+
+const getprofile= async(req,res)=>{
+
+    try {
+        
+const {userid}=req.body;
+
+const userdata = await userModel.findById(userid).select('-password');;
+
+res.json({
+    success:true,
+    data:userdata,
+    message:"The user profile is fetch properly"
+})
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })  
+    }
+}
+
+
+
+
+//######Api for update the profile
+
+
+const updateprofile = async (req, res) => {
+    try {
+        const { userid, name, address, dob, phone } = req.body;
+        const imagefile = req.file;
+
+        if (!userid || !name || !dob || !phone) {
+            return res.status(400).json({
+                success: false,
+                message: "data is missing"
+            });
+        }
+
+        let imageurl;
+        if (imagefile) {
+            const imageupload = await cloudinary.uploader.upload(imagefile.path, { resource_type: "image" });
+            imageurl = imageupload.secure_url;
+        }
+
+        let parsedAddress;
+        try {
+            parsedAddress = JSON.parse(address);
+        } catch (e) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid address format"
+            });
+        }
+
+        const updatedata = await userModel.findByIdAndUpdate(
+            userid,
+            {
+                image: imageurl,
+                name,
+                address: parsedAddress,
+                dob,
+                phone,
+            },
+            { new: true }
+        );
+
+        if (!updatedata) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: updatedata,
+            message: "The user profile is updated"
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
+
+module.exports={regester,userlogin,getprofile,updateprofile}
