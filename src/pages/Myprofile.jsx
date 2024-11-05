@@ -1,28 +1,37 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import profile from "../assets/assets_frontend/profile_pic.png";
+import { Appcontext } from "../Context/Context";
+
+
 
 function MyProfile() {
-  const [data, setData] = useState({
-    name: "Edward Vincent",
-    img: profile,
-    Email_id: "richardjameswap@gmail.com",
-    Phone: "+1 123 456 7890",
-    Address: {
-      line1: "57th Cross, Richmond",
-      line2: "Circle, Church Road",
-    },
-    Gender: "Male",
-    Birthday: "2024-07-20",
-  });
+  // const [data, setData] = useState({
+  //   name: "Edward Vincent",
+  //   img: profile,
+  //   Email_id: "richardjameswap@gmail.com",
+  //   Phone: "+1 123 456 7890",
+  //   Address: {
+  //     line1: "57th Cross, Richmond",
+  //     line2: "Circle, Church Road",
+  //   },
+  //   Gender: "Male",
+  //   Birthday: "2024-07-20",
+  // });
+
+const {data,setData}=useContext(Appcontext);
+
+
+
+
 
   const [isEdit, setIsEdit] = useState(false);
 
-  return (
+  return data && (
     <div className="max-w-2xl mx-auto p-8 bg-gray-50 rounded-lg shadow-2xl mb-16">
       {/* Profile Picture */}
       <div className="flex items-center justify-center mb-8">
         <img
-          src={data.img}
+          src={data.image}
           alt="Profile"
           className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg"
         />
@@ -75,30 +84,30 @@ function MyProfile() {
                 <input
                   type="text"
                   className="w-full px-3 py-2 mb-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  value={data.Address.line1}
+                  value={data.address?.line1 || ""}
                   onChange={(e) =>
                     setData({
                       ...data,
-                      Address: { ...data.Address, line1: e.target.value },
+                      Address: { ...data.address, line1: e.target.value },
                     })
                   }
                 />
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  value={data.Address.line2}
+                  value={data.address?.line2 || ""}
                   onChange={(e) =>
                     setData({
                       ...data,
-                      Address: { ...data.Address, line2: e.target.value },
+                      Address: { ...data.address, line2: e.target.value },
                     })
                   }
                 />
               </>
             ) : (
               <>
-                <p>{data.Address.line1}</p>
-                <p>{data.Address.line2}</p>
+                <p>{data.address.line1}</p>
+                <p>{data.address.line2}</p>
               </>
             )}
           </div>
