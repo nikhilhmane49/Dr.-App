@@ -1,40 +1,81 @@
 import React, { useContext, useState } from "react";
 import profile from "../assets/assets_frontend/profile_pic.png";
 import { Appcontext } from "../Context/Context";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 
 
 function MyProfile() {
-  // const [data, setData] = useState({
-  //   name: "Edward Vincent",
-  //   img: profile,
-  //   Email_id: "richardjameswap@gmail.com",
-  //   Phone: "+1 123 456 7890",
-  //   Address: {
-  //     line1: "57th Cross, Richmond",
-  //     line2: "Circle, Church Road",
-  //   },
-  //   Gender: "Male",
-  //   Birthday: "2024-07-20",
-  // });
+  
 
-const {data,setData}=useContext(Appcontext);
+const {data,setData , token , getproile,backendurl}=useContext(Appcontext);
 
 
 
 
 
   const [isEdit, setIsEdit] = useState(false);
+  const [image,setimage]=useState(false);
+
+  const updatetheprofile= async()=>{
+
+
+try {
+  const formdata = new FormData();
+
+  formdata.append('name', data.name);
+  formdata.append('phone', data.phone);
+  formdata.append('address', JSON.stringify(data.address));
+  formdata.append('gender', data.gender);
+  formdata.append('dob', data.dob);
+
+
+ image && formdata.append('image', image)
+
+ const response = await axios.post(`${backendurl}/api/user/user-updateprofile`,formdata,{headers:{token}})
+
+if(response.data.success){
+toast.success(response.data.message);
+ await getproile();
+ setIsEdit(false);
+ setimage(false);
+}
+else{
+toast.error(response.data.message);
+}
+} catch (error) {
+  console.log(error);
+  toast.error(error.response?.data?.message || "Something went wrong");
+}
+
+  }
 
   return data && (
     <div className="max-w-2xl mx-auto p-8 bg-gray-50 rounded-lg shadow-2xl mb-16">
       {/* Profile Picture */}
       <div className="flex items-center justify-center mb-8">
-        <img
+
+
+     { isEdit ? (
+
+<label htmlFor="image">
+  <div>
+<img src={image? URL.createObjectURL(image) :data.image } alt="" />
+
+  </div>
+
+  <input onChange={(e)=>setimage(e.target.files[0])} type="file"  id="image" />
+</label>
+
+      ):
+       ( <img
           src={data.image}
           alt="Profile"
           className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-lg"
-        />
+        />)
+
+       }
       </div>
 
       {/* Profile Info */}
@@ -57,7 +98,7 @@ const {data,setData}=useContext(Appcontext);
         {/* Email */}
         <div className="flex flex-col items-start">
           <label className="text-sm font-bold text-gray-700">Email:</label>
-          <p className="text-lg font-medium">{data.Email_id}</p>
+          <p className="text-lg font-medium">{data.email}</p>
         </div>
 
         {/* Phone */}
@@ -71,7 +112,7 @@ const {data,setData}=useContext(Appcontext);
               onChange={(e) => setData({ ...data, Phone: e.target.value })}
             />
           ) : (
-            <p className="text-lg font-medium">{data.Phone}</p>
+            <p className="text-lg font-medium">{data.phone}</p>
           )}
         </div>
 
@@ -88,7 +129,7 @@ const {data,setData}=useContext(Appcontext);
                   onChange={(e) =>
                     setData({
                       ...data,
-                      Address: { ...data.address, line1: e.target.value },
+                      address: { ...data.address, line1: e.target.value },
                     })
                   }
                 />
@@ -99,7 +140,7 @@ const {data,setData}=useContext(Appcontext);
                   onChange={(e) =>
                     setData({
                       ...data,
-                      Address: { ...data.address, line2: e.target.value },
+                      address: { ...data.address, line2: e.target.value },
                     })
                   }
                 />
@@ -131,7 +172,7 @@ const {data,setData}=useContext(Appcontext);
                 <option value="Female">Female</option>
               </select>
             ) : (
-              <p className="text-lg font-medium">{data.Gender}</p>
+              <p className="text-lg font-medium">{data.gender}</p>
             )}
           </div>
 
@@ -148,7 +189,7 @@ const {data,setData}=useContext(Appcontext);
                 onChange={(e) => setData({ ...data, Birthday: e.target.value })}
               />
             ) : (
-              <p className="text-lg font-medium">{data.Birthday}</p>
+              <p className="text-lg font-medium">{data.dob}</p>
             )}
           </div>
         </div>
@@ -157,7 +198,7 @@ const {data,setData}=useContext(Appcontext);
         <div className="mt-6">
           {isEdit ? (
             <button
-              onClick={() => setIsEdit(false)}
+              onClick={updatetheprofile}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500"
             >
               Save
