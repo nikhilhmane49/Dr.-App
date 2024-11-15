@@ -245,13 +245,13 @@ const bookappointment = async (req, res) => {
 
     try {
         
-        const { docId, userid, slotDate, slotTime } = req.body;
+        const { DocId, userid, slotDate, slotTime } = req.body;
 
-        console.log({ docId, userid, slotDate, slotTime } );
+        console.log({ DocId, userid, slotDate, slotTime } );
         
 
 
-        if (!userid || !docId || !slotDate || !slotTime) {
+        if (!userid || !DocId || !slotDate || !slotTime) {
     return res.status(400).json({
         success: false,
         message: "Missing required fields"
@@ -259,7 +259,7 @@ const bookappointment = async (req, res) => {
 }
 
         
-        const docdata = await doctorModel.findById(docId).select("-password");
+        const docdata = await doctorModel.findById(DocId).select("-password");
         
         if (!docdata.available) {
             return res.status(400).json({
@@ -294,7 +294,7 @@ const bookappointment = async (req, res) => {
 
 
         const appointmentdata = {
-            docId,
+            DocId,
             userid,
             docdata,
             userdata,
@@ -310,7 +310,7 @@ const bookappointment = async (req, res) => {
 
         //update the dr data of slots_book
         
-        await doctorModel.findByIdAndUpdate(docId, { slots_booked });
+        await doctorModel.findByIdAndUpdate(DocId, { slots_booked });
 
         res.json({
             success: true,
@@ -327,4 +327,32 @@ const bookappointment = async (req, res) => {
     }
 }
 
-module.exports={regester,userlogin,getprofile,updateprofile,bookappointment}
+
+
+
+const appointmentslist = async (req, res) => {
+
+
+    try {
+            const { userid } = req.body;
+
+        const data = await AppointmentModel.find({ userid: userid});
+
+        res.json({
+            success: true,
+            data,
+            message: "Appointments list fetched successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+;
+
+
+ }
+
+module.exports={regester,userlogin,getprofile,updateprofile,bookappointment,appointmentslist}

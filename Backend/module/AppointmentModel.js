@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 
 const appointmentSchema = new mongoose.Schema({
 
-    userId: {
+    userid: {
         type: String,
         required: true
     },
-    docId: {
+    DocId: {
         type: String,
         required: true
     },
@@ -21,19 +21,19 @@ const appointmentSchema = new mongoose.Schema({
     },
     userData: {
         type: Object,
-        require:true
+        // require:true
     },
     docData: {
         type: Object,
-        required: true
+        // required: true
     },
     amount: {
         type: Number,
-        required: true
+        // required: true
     },
     date: {
         type: Number,
-        required: true
+        // required: true
     },
     cancelled: {
         type: Boolean,

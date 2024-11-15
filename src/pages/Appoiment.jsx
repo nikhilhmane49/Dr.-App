@@ -64,48 +64,57 @@ const daysofweak=[  ' SUN','MON','TUS','WED','THU','FRI ','SAT']
   };
 
   const navigate = useNavigate();
+
+
+
+
+
+  //============================================================
   const appointbook = async () => {
-
-   
-  
     if (!token) {
-      toast.warn("Login to Bookend appointment");
-      return navigate('/login')
+      toast.warn("Please login to book an appointment");
+      return navigate("/login");
     }
-    
-    try {
-      
-      const date = docslots[docIndex][0].datetime;
-      let day = date.getDay();
-      let month = date.getMonth() + 1;
-      let year = date.getFullYear();
 
-      const slotdate = day + month + year;
+    try {
+      const date = docslots[docIndex]?.[0]?.datetime;
+      if (!date) {
+        toast.error("Invalid date selected");
+        return;
+      }
+
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      const slotDate = `${String(day).padStart(2, "0")}-${String(
+        month
+      ).padStart(2, "0")}-${year}`;
+
+      if (!DocId || !slotDate || !slotTime) {
+        toast.error("Please select a valid date, time, and doctor");
+        return;
+      }
+
+      console.log({ DocId, slotDate, slotTime, token });
 
       const { data } = await axios.post(
         `${backendurl}/api/user/bookappointment`,
-        { DocId, slotdate, slotTime },
+        { DocId, slotDate, slotTime },
         { headers: { token } }
       );
 
       if (data.success) {
-
-        toast.success("Appointment Booked Successfully");
+        toast.success("Appointment booked successfully");
         listdoctor();
-        navigate('/myappointments')
-  
+        navigate("/My_Appoiment");
+      } else {
+        toast.error(data.error || "Booking slot is not available");
       }
-      else {
-        toast.error(date.error);
-      }
-
     } catch (error) {
-      console.log(error);
-      toast.error(error);
-      
+      console.error("Error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Booking failed");
     }
-
-}
+  };
 
 
 
