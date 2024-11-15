@@ -6,6 +6,8 @@ require('dotenv').config();
 
 
 const validator =require('validator');
+const doctorModel = require('../module/DocterModel');
+const AppointmentModel = require('../module/AppointmentModel');
 
 //##api for regester
 
@@ -234,4 +236,95 @@ const updateprofile = async (req, res) => {
     }
 }
 
-module.exports={regester,userlogin,getprofile,updateprofile}
+
+
+
+//######booked appointments #####
+
+const bookappointment = async (req, res) => { 
+
+    try {
+        
+        const { docId, userid, slotDate, slotTime } = req.body;
+
+        console.log({ docId, userid, slotDate, slotTime } );
+        
+
+
+        if (!userid || !docId || !slotDate || !slotTime) {
+    return res.status(400).json({
+        success: false,
+        message: "Missing required fields"
+    });
+}
+
+        
+        const docdata = await doctorModel.findById(docId).select("-password");
+        
+        if (!docdata.available) {
+            return res.status(400).json({
+                success: false,
+                message: "Doctor is not available for this time"
+            });
+        }
+
+
+        let slots_booked = docdata.slots_booked;
+
+        //check for thr slots availablity
+
+        if (slots_booked[slotDate]) {
+            if (slots_booked[slotDate].includes(slotTime)) {
+                return res.json({
+                    success: false,
+                    message: "Slot is already booked"
+                })
+            } else {
+                slots_booked[slotDate].push(slotTime);
+            }
+        } else {
+            slots_booked[slotDate] = [];
+            slots_booked[slotDate].push(slotTime);
+        }
+
+        const userdata = await userModel.findById(userid).select('-password');
+
+        delete docdata.slots_booked;
+
+
+
+        const appointmentdata = {
+            docId,
+            userid,
+            docdata,
+            userdata,
+            amount: docdata.fees,
+            slotDate,
+            slotTime,
+            Date: new Date(),
+        }
+
+        const newAppointment = new AppointmentModel(appointmentdata);
+
+        await newAppointment.save();
+
+        //update the dr data of slots_book
+        
+        await doctorModel.findByIdAndUpdate(docId, { slots_booked });
+
+        res.json({
+            success: true,
+            message: "Appointment booked successfully"
+        })
+
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports={regester,userlogin,getprofile,updateprofile,bookappointment}

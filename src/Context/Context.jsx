@@ -76,6 +76,7 @@ useEffect(()=>{
 
     const value = {
         doctors,
+        listdoctor,
         backendurl,
         token,settoken
         ,data,setData,getproile

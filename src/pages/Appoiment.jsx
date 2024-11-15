@@ -1,13 +1,16 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Appcontext } from "../Context/Context";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 import verified_icon from "../assets/assets_frontend/verified_icon.svg";
 import info_icon from "../assets/assets_frontend/info_icon.svg";
 import Relatabledr from "../Compoenets/Appoiment/Relatabledr";
+import { toast } from "react-toastify";
+
 
 function Appoiment() {
-  const { doctors } = useContext(Appcontext);
+  const { doctors, backendurl, listdoctor, token } = useContext(Appcontext);
   const { DocId } = useParams();
 const daysofweak=[  ' SUN','MON','TUS','WED','THU','FRI ','SAT']
 
@@ -59,6 +62,55 @@ const daysofweak=[  ' SUN','MON','TUS','WED','THU','FRI ','SAT']
 
     setDocSlots(slotsArray);  // Set state only once after the loop completes
   };
+
+  const navigate = useNavigate();
+  const appointbook = async () => {
+
+   
+  
+    if (!token) {
+      toast.warn("Login to Bookend appointment");
+      return navigate('/login')
+    }
+    
+    try {
+      
+      const date = docslots[docIndex][0].datetime;
+      let day = date.getDay();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+
+      const slotdate = day + month + year;
+
+      const { data } = await axios.post(
+        `${backendurl}/api/user/bookappointment`,
+        { DocId, slotdate, slotTime },
+        { headers: { token } }
+      );
+
+      if (data.success) {
+
+        toast.success("Appointment Booked Successfully");
+        listdoctor();
+        navigate('/myappointments')
+  
+      }
+      else {
+        toast.error(date.error);
+      }
+
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+      
+    }
+
+}
+
+
+
+
+
 
   useEffect(() => {
     fetchInfo();
@@ -170,10 +222,15 @@ const daysofweak=[  ' SUN','MON','TUS','WED','THU','FRI ','SAT']
               )}
             </div>
 
-            <button className="bg-primary p-5 rounded-full text-white mt-16 ml-[600px] text-xl items-center mb-16">Book an appointment</button>
+            <button
+              onClick={appointbook}
+              className="bg-primary p-5 rounded-full text-white mt-16 ml-[600px] text-xl items-center mb-16"
+            >
+              Book an appointment
+            </button>
           </div>
 
-          <Relatabledr  DocId={DocId} specfication={docInfo.speciality} />
+          <Relatabledr DocId={DocId} specfication={docInfo.speciality} />
         </>
       )
     );
