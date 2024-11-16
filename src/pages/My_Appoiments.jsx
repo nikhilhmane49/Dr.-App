@@ -7,7 +7,13 @@ function My_Appoiment() {
   const { backendurl, token } = useContext(Appcontext);
   const [listdata, setlistdata] = useState([]);
 
+
+
+
   const getappointmentlist = async () => {
+
+  
+
     if (!token) {
       toast.warn("Please log in to view appointments");
       return;
@@ -15,24 +21,24 @@ function My_Appoiment() {
 
     try {
       const { data } = await axios.get(
-        `${backendurl}/api/user-appointmentslist`,
+        `${backendurl}/api/user/user-appointmentslist`,
         { headers: { token } }
       );
+      console.log("API Response:", data);
 
-      // console.log(data.data);
-      
+ if (data.success && Array.isArray(data.data)) {
+   setlistdata(data.data.reverse());
+ } else {
+   console.warn("No data or invalid format");
+   setlistdata([]);
+ }
 
-   
-   
-      
-
-      if (data.success) {
-        setlistdata(data.listdata.reverse());
-      }
     } catch (error) {
-      console.error("Error:", error.data?.data || error.message);
-      toast.error(error.data?.data?.message || "Fetching appointments failed");
+      const message = error.response?.data?.message || error.message;
+      console.error("Error fetching appointments:", message);
+      toast.error(message);
     }
+
   };
 
   console.log(listdata);
@@ -40,6 +46,8 @@ function My_Appoiment() {
 
   useEffect(() => {
     if (token) {
+
+
       getappointmentlist();
     }
   }, [token]);
@@ -63,7 +71,7 @@ function My_Appoiment() {
                 <p className="text-lg font-medium text-gray-800">
                   {doctor.docData.name}
                 </p>
-                <p className="text-gray-600">{doctor.specialty}</p>
+                <p className="text-gray-600">{doctor.docData.specialty}</p>
                 <div className="mt-2 text-gray-600">
                   <p>Address:</p>
                   <p>{doctor.docData.address.line1}</p>
