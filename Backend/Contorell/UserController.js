@@ -353,6 +353,54 @@ const appointmentslist = async (req, res) => {
 ;
 
 
- }
+}
+ 
 
-module.exports={regester,userlogin,getprofile,updateprofile,bookappointment,appointmentslist}
+
+
+//=======================================================
+
+//cancel appointments
+
+
+const cancelappointment = async (req, res) => { 
+
+    try {
+        
+        const { appointmentid , userid } = req.body;
+
+        const appointmentdata = await AppointmentModel.findById(appointmentid);
+
+        if (appointmentdata.userid !== userid) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized access"
+            });
+        }
+
+        await AppointmentModel.findByIdAndUpdate(appointmentid, { cancelled: true });
+
+        //reasling the slots
+
+       const {DocId,slotDate,slotTime} = appointmentdata
+
+        const docdata = await doctorModel.findById(DocId);
+
+        const slots_booked = docdata.slots_booked;
+
+        slots_booked[slotDate] = slots_booked[slotDate].filter((time) => time !== slotTime);
+        
+        await doctorModel.findByIdAndUpdate(DocId, { slots_booked });
+
+        res.json({
+            success: true,
+            message: "Appointment cancelled successfully"
+        })
+
+
+    } catch (error) {
+        
+    }
+}
+
+module.exports={regester,userlogin,getprofile,updateprofile,bookappointment,appointmentslist,cancelappointment}

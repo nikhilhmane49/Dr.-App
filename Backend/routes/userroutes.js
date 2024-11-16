@@ -1,7 +1,7 @@
 const express = require('express');
 
 
-const {regester ,userlogin , getprofile , updateprofile ,bookappointment,appointmentslist} =require('../Contorell/UserController');
+const {regester ,userlogin , getprofile , updateprofile ,bookappointment,appointmentslist,cancelappointment} =require('../Contorell/UserController');
 
 const authuser = require('../midellware/AuthUser');
 
@@ -15,6 +15,7 @@ userroutes.get('/user-profile',  authuser ,getprofile);
 userroutes.post('/user-updateprofile', upload.single('image'), authuser, updateprofile);
 userroutes.post('/bookappointment',authuser,bookappointment);
 userroutes.get('/user-appointmentslist',authuser, appointmentslist);
+userroutes.post('/user-cancelappointment',authuser, cancelappointment);
 
 
 module.exports =userroutes;

@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Appcontext } from "../Context/Context.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Appoiment from "./Appoiment.jsx";
 
 function My_Appoiment() {
   const { backendurl, token } = useContext(Appcontext);
@@ -43,6 +44,30 @@ function My_Appoiment() {
 
   console.log(listdata);
   
+
+
+  const cancelappointment = async (appointmentid) => {
+    try {
+      const { data } = await axios.post(
+        `${backendurl}/api/user/user-cancelappointment`,
+{appointmentid},
+        { headers: { token } }
+      );
+       if (data.success) {
+         toast.success("Appointment cancelled successfully");
+         getappointmentlist();
+       }
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      console.error("Error is cancel appointment ", message);
+      toast.error(message);
+    }
+  };
+
+
+
+
+
 
   useEffect(() => {
     if (token) {
@@ -103,7 +128,10 @@ function My_Appoiment() {
                     <button className="bg-blue-500 text-white py-2 px-4 rounded cursor-not-allowed">
                       Paid
                     </button>
-                    <button className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded">
+                    <button
+                      onClick={cancelappointment()}
+                      className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded"
+                    >
                       Cancel appointment
                     </button>
                   </>
