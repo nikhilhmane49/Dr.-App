@@ -8,9 +8,12 @@ export const Admincontext = createContext();
 
 
 
+
+
 const AdminProvider = ({ children }) => {
   const [atoken, setatoken] = useState(localStorage.getItem("atoken")?localStorage.getItem("atoken"):"");
-const[doctor , setdoctor]=useState([])
+  const [doctor, setdoctor] = useState([])
+  const [appointments, setappointments] = useState([])
   const backendurl = import.meta.env.VITE_BACKEND_URL;
 
 
@@ -69,6 +72,41 @@ try {
 
 }
 
+  
+  //appointments
+
+  const appointmentlist = async () => {
+    try {
+      const response = await axios.get(
+        `${backendurl}/api/admin/appointmentslist`,
+        {
+          headers: {
+            atoken: atoken,
+          },
+        }
+      );
+
+      console.log(response.data);
+      
+      
+      if (response.data.success) { 
+        toast.success(response.data.message);
+        setappointments(response.data.data);
+
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  }
+
+  useEffect(() => {
+    if (atoken) {
+      appointmentlist();
+    }
+    }, [atoken]);
 
 
 
@@ -78,6 +116,9 @@ try {
     backendurl,
     doctor,
     changeavaliblity,
+    appointmentlist,
+    appointments,
+    setappointments,
   };
   return (
     <Admincontext.Provider value={value}>{children}</Admincontext.Provider>

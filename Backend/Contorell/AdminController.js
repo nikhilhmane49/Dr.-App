@@ -3,6 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const cloudinary = require('cloudinary').v2;
 const DoctorModel = require("../module/DocterModel.js");
+const AppointmentModel = require("../module/AppointmentModel.js");
 
 const jwt = require('jsonwebtoken');
 
@@ -172,5 +173,39 @@ const getalldoctor = async(req,res)=>{
 }
 
 
+//====================================================
 
-module.exports = { addDoctor,adminLogin,getalldoctor}
+const appointmentslist = async (req, res) => {
+
+    try {
+    
+        const appointments = await AppointmentModel.find({});
+        
+      
+        
+        
+        if(appointments && appointments.length > 0){
+            res.status(200).json({
+                success: true,
+                data: appointments,
+                message: "Appointments fetched successfully"
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: "No appointments found for this doctor"
+            });
+        }
+    
+} catch (error) {
+    console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+}
+ }
+
+
+
+module.exports = { addDoctor,adminLogin,getalldoctor,appointmentslist}
