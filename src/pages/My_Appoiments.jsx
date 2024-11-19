@@ -44,8 +44,7 @@ function My_Appoiment() {
 
   console.log(listdata);
   
-
-
+//================================================================
   const cancelappointment = async (appointmentid) => {
     try {
       const { data } = await axios.post(
@@ -108,33 +107,31 @@ function My_Appoiment() {
                 </p>
               </div>
               <div className="flex flex-col space-y-2">
-                {index === 0 && (
-                  <button className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded">
+                {!doctor.paid && !doctor.cancelled && (
+                  <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition">
+                    Pay online
+                  </button>
+                )}
+
+                {doctor.paid && (
+                  <button className="bg-blue-500 text-white py-2 px-4 rounded cursor-not-allowed">
+                    Paid
+                  </button>
+                )}
+
+                {!doctor.cancelled && (
+                  <button
+                    onClick={() => cancelappointment(doctor._id)}
+                    className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded"
+                  >
                     Cancel appointment
                   </button>
                 )}
-                {index === 1 && (
-                  <>
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition">
-                      Pay here
-                    </button>
-                    <button className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded">
-                      Cancel appointment
-                    </button>
-                  </>
-                )}
-                {index === 2 && (
-                  <>
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded cursor-not-allowed">
-                      Paid
-                    </button>
-                    <button
-                      onClick={cancelappointment()}
-                      className="bg-gray-100 border border-gray-300 text-gray-600 py-2 px-4 rounded"
-                    >
-                      Cancel appointment
-                    </button>
-                  </>
+
+                {doctor.cancelled && (
+                  <button className="text-red-600 border-red-600 border-2 p-2">
+                    Appointment cancelled
+                  </button>
                 )}
               </div>
             </div>
