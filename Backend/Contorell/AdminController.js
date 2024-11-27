@@ -6,8 +6,7 @@ const DoctorModel = require("../module/DocterModel.js");
 const AppointmentModel = require("../module/AppointmentModel.js");
 
 const jwt = require('jsonwebtoken');
-
-
+require('dotenv').config();
 
 
 
@@ -114,6 +113,8 @@ const adminLogin = async (req, res) => {
             const token = jwt.sign(email + password, process.env.JWT_SECRET);
 
             console.log(token);
+            console.log(process.env.ADMIN_EMAIL);
+            
             
             res.status(200).json({
                 success: true,
