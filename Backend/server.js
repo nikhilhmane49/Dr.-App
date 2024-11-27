@@ -26,8 +26,9 @@ connectcloudinary();
 
 app.use(express.json());
 app.use(cors({
-   origin: process.env.FORNT_END
+    origin: '*', // Allows requests from any origin
 }));
+
 
 
 
