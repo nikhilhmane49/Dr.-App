@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { addDoctor,adminLogin, getalldoctor ,appointmentslist} = require('../Contorell/AdminController');
+const { addDoctor,adminLogin, getalldoctor ,appointmentslist , adminregester} = require('../Contorell/AdminController');
 
 const {changeavaliblity}=require('../Contorell/doctorcontroller');
 
@@ -10,6 +10,7 @@ const adminrouter = express.Router();
 
  adminrouter.post('/add-doctor', authadmin, upload.single('image'), addDoctor);
  adminrouter.post('/login',  adminLogin);
+ adminrouter.post('/regester',  adminregester);
  adminrouter.post('/all-doctors', authadmin,getalldoctor);
 adminrouter.post('/changeavaliblity', authadmin, changeavaliblity);
 adminrouter.get('/appointmentslist', authadmin, appointmentslist);

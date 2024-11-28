@@ -6,6 +6,7 @@ const DoctorModel = require("../module/DocterModel.js");
 const AppointmentModel = require("../module/AppointmentModel.js");
 
 const jwt = require('jsonwebtoken');
+const adminModel = require("../module/AdminModel.js");
 require('dotenv').config();
 
 
@@ -104,11 +105,24 @@ const addDoctor = async (req, res) => {
 
 
 const adminLogin = async (req, res) => {
-    
-    const { email, password } = req.body;
 
+    
     try {
-        if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+  
+    const {email,password}=req.body;
+
+    const admin = await adminModel.findOne({email});
+
+    if(!admin){
+       return res.json({
+            success:false,
+            message:"user does not extist"
+        })
+    }
+    
+    const ismacth= await bcrypt.compare(password,admin.password);
+
+    if(ismacth){
 
             const token = jwt.sign(email + password, process.env.JWT_SECRET);
 
@@ -141,6 +155,97 @@ const adminLogin = async (req, res) => {
 
 
 }
+
+
+
+
+
+//##api for regester
+
+const adminregester= async (req,res)=>{
+
+
+
+    try {
+
+        const{email,password}=req.body;
+
+
+        if(!email||!password){
+            return res.json({
+                success:false,
+                Message:"fille all the detail"
+            })
+        }
+        
+        //email validactor
+        
+        if (!validator.isEmail(email)) {
+            return res.json({
+                success:false,
+                message:"Please provide a valid email"
+            })
+        }
+        //password validation
+        
+        if(!validator.isLength(password,{min:3})){
+            return res.json({
+                success:false,
+                message:"Password must be at least 8 characters long"
+            })
+        }
+        
+        
+        //hashing the password
+        
+        const salt= await bcrypt.genSalt(10);
+        
+        const hashpassword = await bcrypt.hash(password,salt);
+        
+        
+        const data ={
+            email,
+            password:hashpassword,
+        }
+        
+        const adminmodel = new adminModel(data)
+        
+        const user= await adminmodel.save();
+        
+        
+        // const token = jwt.sign({id:user._id},process.env.JWT_SECRET);
+
+        // if(token){
+        // res.status(200).json({
+        //     success: true,
+        //     token: token,
+        //     message: "User regester successful"
+        // })
+    //}
+
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 //######Get-all the doctors 
@@ -209,4 +314,4 @@ const appointmentslist = async (req, res) => {
 
 
 
-module.exports = { addDoctor,adminLogin,getalldoctor,appointmentslist}
+module.exports = { addDoctor,adminLogin,getalldoctor,appointmentslist,adminregester}
